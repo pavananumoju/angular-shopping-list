@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   
+  navComponent:string = 'recipes';
+
+
+  onNavClick(nav: string){
+    this.navComponent = nav;
+  }
+
 }
