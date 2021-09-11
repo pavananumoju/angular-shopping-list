@@ -6,12 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  
-  navComponent:string = 'recipes';
-
-
-  onNavClick(nav: string){
-    this.navComponent = nav;
-  }
 
 }
