@@ -1,19 +1,23 @@
-import { Component } from "@angular/core";
+import { Component, ComponentFactoryResolver, OnDestroy, ViewChild, ViewContainerRef } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
+import { AlertComponent } from "../shared/alert/alert.component";
+import { PlaceHolderDirective } from "../shared/placeholder/place-holder.directive";
 import { AuthResponseData, AuthService } from "./auth.service";
 
 @Component({
     selector: 'app-auth',
     templateUrl: './auth.component.html'
 })
-export class AuthComponent{
+export class AuthComponent implements OnDestroy{
     isLoginMode = true;
     isLoading = false;
     error:string = null;
+    @ViewChild(PlaceHolderDirective, {static: false}) alertHost: PlaceHolderDirective;
+    private closeSub: Subscription;
 
-    constructor(private authService: AuthService, private router: Router){}
+    constructor(private authService: AuthService, private router: Router, private compFactRes: ComponentFactoryResolver){}
 
     onSwitchMode(){
         this.isLoginMode = !this.isLoginMode;
@@ -46,6 +50,7 @@ export class AuthComponent{
         }, errorMessage => {
             this.isLoading = false;
             this.error = errorMessage;
+            this.showErrorAlert(errorMessage);
             // console.log(error);
         });
 
@@ -54,5 +59,23 @@ export class AuthComponent{
 
     onHandleClose(){
         this.error = null;
+    }
+
+    private showErrorAlert(message: string){
+        const comFactResolver = this.compFactRes.resolveComponentFactory(AlertComponent);
+        const hostViewContRef = this.alertHost.viewContRef;
+        hostViewContRef.clear();
+        const compRef = hostViewContRef.createComponent(comFactResolver);
+        compRef.instance.message = message;
+        this.closeSub = compRef.instance.close.subscribe(() =>{
+            this.closeSub.unsubscribe();
+            hostViewContRef.clear();
+        });
+    }
+
+    ngOnDestroy(){
+        if(this.closeSub){
+            this.closeSub.unsubscribe();
+        }
     }
 }
