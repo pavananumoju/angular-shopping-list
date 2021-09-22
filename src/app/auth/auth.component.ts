@@ -51,4 +51,8 @@ export class AuthComponent{
 
         authForm.reset();
     }
+
+    onHandleClose(){
+        this.error = null;
+    }
 }
