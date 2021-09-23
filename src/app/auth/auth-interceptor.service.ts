@@ -2,7 +2,6 @@ import { HttpHandler, HttpInterceptor, HttpParams, HttpRequest } from "@angular/
 import { Injectable } from "@angular/core";
 import { exhaustMap, take } from "rxjs/operators";
 import { AuthService } from "./auth.service";
-import { UserModel } from "./user.model";
 
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor{
